@@ -1,0 +1,7 @@
+.cache
+.idea
+.git
+.vscode
+node_modules
+pnpm-lock.yaml
+public
