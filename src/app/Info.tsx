@@ -1,15 +1,8 @@
-/* @jsx h */
-import { h, fragment } from './h';
+import { h, fragment } from '@/jsx/jsx';
 
-type TitleProps = {
-    title: string;
-};
+import { Title } from './Title';
 
-export function Title({ title }: TitleProps): JSX.Element {
-    return <h1 onClick={() => console.log('foo')}>{title}</h1>;
-}
-
-export function Foo() {
+export function Info(): JSX.Element {
     const title = 'list';
 
     return (

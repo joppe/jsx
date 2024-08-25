@@ -2,15 +2,14 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "display": "Default",
   "compilerOptions": {
-    "baseUrl": "./",
-    "declaration": true,
+    "baseUrl": ".",
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "isolatedModules": true,
     "jsx": "react",
     "jsxFactory": "h",
     "jsxFragmentFactory": "fragment",
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noUnusedLocals": true,
@@ -21,7 +20,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "es6",
+    "target": "ES2020",
     "useDefineForClassFields": true,
     "paths": {
       "@/*": ["src/*"]
