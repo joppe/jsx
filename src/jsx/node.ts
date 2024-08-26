@@ -1,3 +1,4 @@
+import { hook } from './hook';
 import { fragment } from './jsx';
 
 export type VTextNode = {
@@ -10,31 +11,27 @@ export type VFragment = {
 
 export type VElement = {
     tag: keyof HTMLElementTagNameMap;
-    props: Record<string, string>;
+    props: Record<string, any>;
     children: VNode[];
 };
 
 export type VNode = VElement | VTextNode | VFragment;
 
-let activeKey: string | undefined;
-
 export function createVNode(element: JSX.Element, key: string): VNode {
     if (typeof element.tag === 'function') {
-        activeKey = key;
-        const el = element.tag(element.props);
-        activeKey = undefined;
+        const el = hook(element.tag, element.props, key);
 
         return createVNode(el, `${key}-0`);
     }
 
     const children = element.children.map((child, i) => {
-        if (typeof child === 'string') {
-            return {
-                text: child,
-            };
+        if (typeof child === 'object') {
+            return createVNode(child as JSX.Element, `${key}-${i}`);
         }
 
-        return createVNode(child as JSX.Element, `${key}-${i}`);
+        return {
+            text: child,
+        };
     });
 
     if (element.tag === fragment) {
@@ -43,7 +40,7 @@ export function createVNode(element: JSX.Element, key: string): VNode {
 
     return {
         tag: element.tag as keyof HTMLElementTagNameMap,
-        props: element.props as Record<string, string>,
+        props: element.props,
         children,
     };
 }

@@ -17,8 +17,8 @@ export type ReplaceAction = {
 };
 export type UpdateAction = {
     type: ActionType.UPDATE;
-    remove: string[];
-    set: Record<string, string>;
+    remove: Record<string, any>;
+    set: Record<string, any>;
     children: Action[];
 };
 
@@ -64,7 +64,7 @@ export function diffChildren(
 
 export function diffElement(oldEl: VNode, newEl: VNode): Action {
     if ('text' in oldEl) {
-        if ('text' in newEl && oldEl.text !== newEl.text) {
+        if ('text' in newEl && oldEl.text === newEl.text) {
             return {
                 type: ActionType.NO_ACTION,
             };
@@ -83,22 +83,22 @@ export function diffElement(oldEl: VNode, newEl: VNode): Action {
         };
     }
 
-    const remove: string[] = [];
+    const remove: Record<string, any> = {};
 
     if ('props' in oldEl) {
-        for (const prop in oldEl.props) {
-            if (!('props' in newEl && prop in newEl.props)) {
-                remove.push(prop);
+        for (const key in oldEl.props) {
+            if (!('props' in newEl && newEl.props[key] === oldEl.props[key])) {
+                remove[key] = oldEl.props[key];
             }
         }
     }
 
-    const set: Record<string, string> = {};
+    const set: Record<string, any> = {};
 
     if ('props' in newEl) {
         for (const [key, value] of Object.entries(newEl.props)) {
             if (!('props' in oldEl) || newEl.props[key] !== oldEl.props[key]) {
-                set[key] = value as string;
+                set[key] = value;
             }
         }
     }
