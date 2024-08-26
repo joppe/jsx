@@ -1,9 +1,15 @@
 import { h, fragment } from '@/jsx/jsx';
 
 import { Title } from './Title';
+import { useState } from '@/jsx/hook';
 
 export function Info(): JSX.Element {
     const title = 'list';
+    const [counter, setCounter] = useState(0);
+
+    function handleClick() {
+        setCounter(counter + 1);
+    }
 
     return (
         <>
@@ -15,6 +21,8 @@ export function Info(): JSX.Element {
                     <li>2</li>
                     <li>third</li>
                 </ul>
+                <p>{counter}</p>
+                <button onClick={handleClick}>Click me</button>
             </div>
         </>
     );

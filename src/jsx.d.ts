@@ -10,13 +10,18 @@ declare namespace JSX {
             | Symbol
             | string;
         props: Record<string, unknown>;
-        children: JSX.Element[] | [string];
+        children: (JSX.Element | string)[];
     };
 
     type FunctionComponent = (props: Record<string, unknown>) => JSX.Element;
 
     type IntrinsicElements = {
-        [P in keyof HTMLElementTagNameMap]: Partial<HTMLElementTagNameMap[P]> &
-            Partial<Events>;
+        [P in keyof HTMLElementTagNameMap]: Omit<
+            Partial<HTMLElementTagNameMap[P]>,
+            'style'
+        > &
+            Partial<Events> & {
+                style?: string;
+            };
     };
 }

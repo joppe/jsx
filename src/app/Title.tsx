@@ -5,5 +5,5 @@ type TitleProps = {
 };
 
 export function Title({ title }: TitleProps): JSX.Element {
-    return <h1 onClick={() => console.log('foo')}>{title}</h1>;
+    return <h1 style="font-size: 24px; color: blue;">{title}</h1>;
 }
