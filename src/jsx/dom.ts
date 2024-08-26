@@ -38,27 +38,14 @@ export function removeProperties(
     }
 }
 
-export function createElement(
-    vnode: VNode,
-    key: string,
-): HTMLElement | Text | DocumentFragment {
-    if ('text' in vnode) {
-        return document.createTextNode(vnode.text);
-    }
+export function createTextElement(text: string): Text {
+    return document.createTextNode(text);
+}
 
-    let element;
+export function createFragmentElement(): DocumentFragment {
+    return document.createDocumentFragment();
+}
 
-    if ('tag' in vnode) {
-        element = document.createElement(vnode.tag);
-
-        addProperties(element, vnode.props);
-    } else {
-        element = document.createDocumentFragment();
-    }
-
-    vnode.children.forEach((child, i) => {
-        element.appendChild(createElement(child, `${key}-${i}`));
-    });
-
-    return element;
+export function createHTMLElement(tag: string): HTMLElement {
+    return document.createElement(tag);
 }

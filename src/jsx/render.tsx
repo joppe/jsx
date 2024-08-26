@@ -1,12 +1,38 @@
 import { Action, ActionType, diffElement } from './diff';
-import { addProperties, createElement, removeProperties } from './dom';
+import {
+    addProperties,
+    createFragmentElement,
+    createHTMLElement,
+    createTextElement,
+    removeProperties,
+} from './dom';
 import { createVNode, VNode } from './node';
 
-export function apply(
-    parent: HTMLElement,
-    actions: Action[],
-    key: string,
-): void {
+export function createElement(
+    vnode: VNode,
+): HTMLElement | Text | DocumentFragment {
+    if ('text' in vnode) {
+        return createTextElement(vnode.text);
+    }
+
+    let element;
+
+    if ('tag' in vnode) {
+        element = createHTMLElement(vnode.tag);
+
+        addProperties(element, vnode.props);
+    } else {
+        element = createFragmentElement();
+    }
+
+    vnode.children.forEach((child) => {
+        element.appendChild(createElement(child));
+    });
+
+    return element;
+}
+
+export function apply(parent: HTMLElement, actions: Action[]): void {
     const children = Array.from(parent.childNodes);
 
     actions.forEach((action, i) => {
@@ -16,16 +42,16 @@ export function apply(
             case ActionType.NO_ACTION:
                 break;
             case ActionType.REPLACE:
-                child.replaceWith(createElement(action.node, `${key}-${i}`));
+                child.replaceWith(createElement(action.node));
                 break;
             case ActionType.UPDATE:
                 removeProperties(child, action.remove);
                 addProperties(child, action.set);
 
-                apply(child, action.children, `${key}-${i}`);
+                apply(child, action.children);
                 break;
             case ActionType.CREATE:
-                parent.appendChild(createElement(action.node, `${key}-${i}`));
+                parent.appendChild(createElement(action.node));
                 break;
             case ActionType.REMOVE:
                 child.remove();
@@ -42,7 +68,7 @@ export async function rerender(): Promise<void> {
     const newVnode = createVNode(tree, 'root');
     const diff = diffElement(vnode, newVnode);
 
-    apply(root.parentElement as HTMLElement, [diff], 'root');
+    apply(root.parentElement as HTMLElement, [diff]);
 
     vnode = newVnode;
 }
@@ -53,13 +79,13 @@ export function render(newTree: JSX.Element, mount: HTMLElement | null): void {
     }
 
     vnode = createVNode(tree, 'root');
-    root = createElement(vnode, 'root') as HTMLElement;
+    root = createElement(vnode) as HTMLElement;
     mount.appendChild(root);
 
     const newVnode = createVNode(newTree, 'root');
     const diff = diffElement(vnode, newVnode);
 
-    apply(root.parentElement as HTMLElement, [diff], 'root');
+    apply(root.parentElement as HTMLElement, [diff]);
 
     tree = newTree;
     vnode = newVnode;
