@@ -1,64 +1,6 @@
 import { Action, ActionType, diffElement } from './diff';
+import { addProperties, createElement, removeProperties } from './dom';
 import { createVNode, VNode } from './node';
-
-export function isEvent(prop: string): boolean {
-    return prop.indexOf('on') === 0;
-}
-
-export function addProperties(
-    element: HTMLElement,
-    props: Record<string, any>,
-): void {
-    for (const [key, value] of Object.entries(props)) {
-        if (isEvent(key)) {
-            const event = key.slice(2).toLowerCase();
-
-            element.addEventListener(event, value as EventListener);
-        } else {
-            element.setAttribute(key, value);
-        }
-    }
-}
-
-export function removeProperties(
-    element: HTMLElement,
-    props: Record<string, any>,
-): void {
-    for (const [key, value] of Object.entries(props)) {
-        if (isEvent(key)) {
-            const event = key.slice(2).toLowerCase();
-
-            element.removeEventListener(event, value as EventListener);
-        } else {
-            element.removeAttribute(key);
-        }
-    }
-}
-
-export function createElement(
-    vnode: VNode,
-    key: string,
-): HTMLElement | Text | DocumentFragment {
-    if ('text' in vnode) {
-        return document.createTextNode(vnode.text);
-    }
-
-    let element;
-
-    if ('tag' in vnode) {
-        element = document.createElement(vnode.tag);
-
-        addProperties(element, vnode.props);
-    } else {
-        element = document.createDocumentFragment();
-    }
-
-    vnode.children.forEach((child, i) => {
-        element.appendChild(createElement(child, `${key}-${i}`));
-    });
-
-    return element;
-}
 
 export function apply(
     parent: HTMLElement,
